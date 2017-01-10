@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dice Roller</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+      $(document).ready(function() {
+        var $diceList = $('.dice-list:first');
+
+        var sides = [4, 6, 8, 10, 12, 20, 100];
+        var template = $('button.hidden:first');
+        $.each(sides, function(s, side) {
+          var diceBtn = template.clone();
+          $diceList.append(diceBtn);
+
+          diceBtn.removeClass('hidden').text('d' + side).on('click', function() {
+            rollDice(side);
+          });
+        });
+      });
+
+      function rollDice(max) {
+        var resultDiv = $('li.hidden').clone();
+        $('ul').prepend(resultDiv);
+
+        var roll = getRandomInt(1, max);
+        resultDiv.removeClass('hidden');
+        resultDiv.find('label:first')
+          .text('d' + max + ':');
+        resultDiv.find('button:first')
+          .text(roll)
+          .addClass(roll === 1 ? 'btn-danger' : roll === max ? 'btn-success' : 'btn-primary');
+      }
+
+      function getRandomInt(min, max) {
+        var byteArray = new Uint8Array(1);
+        window.crypto.getRandomValues(byteArray);
+
+        var range = max - min + 1;
+        var max_range = 256;
+        if (byteArray[0] >= Math.floor(max_range / range) * range) {
+          return getRandomInt(min, max);
+        } else {
+          return min + (byteArray[0] % range);
+        }
+      }
+    </script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <style type='text/css'>
+      *[class*="col-"] {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      body > .container-fluid.main-area {
+        padding: 16px;
+        max-width: 360px;
+      }
+
+      .scrollable {
+        height: 526px;
+        overflow-y: scroll;
+      }
+
+      ul.list-group > li.list-group-item + li.list-group-item {
+        background-color: #999999;
+
+        transition-property: background-color;
+        transition-duration: 2s;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid main-area">
+      <div class="row">
+        <div class="col-xs-4">
+          <div class="dice-list">
+            <button type="button" class="btn btn-lg btn-block btn-primary hidden"></button>
+          </div>
+        </div>
+
+        <div class="col-xs-8 scrollable">
+          <div class="panel panel-primary">
+            <ul class="list-group">
+              <li class="list-group-item panel-primary hidden">
+                <div class="row">
+                  <label class="col-xs-4"></label>
+                  <button type="button" class="col-xs-4 btn btn-lg" disabled></button>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
